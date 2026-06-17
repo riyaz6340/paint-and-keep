@@ -1,4 +1,4 @@
-import { ALLOWED_IMAGE_TYPES, DEFAULT_MAX_FILE_SIZE, type AllowedImageType } from './cloudinary';
+import { ALLOWED_IMAGE_TYPES, DEFAULT_MAX_FILE_SIZE, type AllowedImageType } from './cloudinary-constants';
 
 /**
  * Image upload utility for client-side use.

@@ -1,12 +1,29 @@
 /**
- * Paint & Keep - Cloudinary Image Management
+ * Paint & Keep - Cloudinary Image Management (SERVER-ONLY)
  *
  * Replaces AWS S3 + CloudFront with Cloudinary (free tier: 25GB storage, 25GB bandwidth/month).
  * Handles image upload, deletion, and URL generation with automatic optimization.
  * Cloudinary auto-delivers WebP/AVIF based on browser support.
+ *
+ * DO NOT import this file in client components. Use @/lib/image-constants for shared constants.
  */
 
+import 'server-only';
 import { v2 as cloudinary, type UploadApiResponse } from 'cloudinary';
+import {
+  ALLOWED_IMAGE_TYPES,
+  DEFAULT_MAX_FILE_SIZE,
+  MAX_GALLERY_FILE_SIZE,
+  type AllowedImageType,
+} from './cloudinary-constants';
+
+// Re-export constants for backward compatibility with server-side imports
+export {
+  ALLOWED_IMAGE_TYPES,
+  DEFAULT_MAX_FILE_SIZE,
+  MAX_GALLERY_FILE_SIZE,
+  type AllowedImageType,
+};
 
 // Configure Cloudinary SDK
 cloudinary.config({
@@ -16,20 +33,7 @@ cloudinary.config({
   secure: true,
 });
 
-/** Allowed image MIME types for upload */
-export const ALLOWED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-] as const;
 
-export type AllowedImageType = (typeof ALLOWED_IMAGE_TYPES)[number];
-
-/** Default max file size: 5MB */
-export const DEFAULT_MAX_FILE_SIZE = 5 * 1024 * 1024;
-
-/** Max file size for gallery/community uploads: 10MB */
-export const MAX_GALLERY_FILE_SIZE = 10 * 1024 * 1024;
 
 export interface UploadOptions {
   /** Cloudinary folder path (e.g., 'products', 'gallery') */
@@ -172,21 +176,7 @@ export function getOptimizedUrl(
   return getImageUrl(publicId, { width, quality, format: 'auto' });
 }
 
-/**
- * Predefined image size configurations for the storefront.
- */
-export const PRODUCT_IMAGE_SIZES = {
-  thumbnail: { width: 150, height: 150, quality: 75 as const, crop: 'fill' as const },
-  card: { width: 400, height: 400, quality: 80 as const, crop: 'fill' as const },
-  detail: { width: 800, height: 800, quality: 85 as const, crop: 'limit' as const },
-  zoom: { width: 1600, height: 1600, quality: 90 as const, crop: 'limit' as const },
-} as const;
 
-export const GALLERY_IMAGE_SIZES = {
-  thumbnail: { width: 200, height: 200, quality: 75 as const, crop: 'fill' as const },
-  masonry: { width: 400, height: 600, quality: 80 as const, crop: 'fit' as const },
-  lightbox: { width: 1200, height: 1200, quality: 85 as const, crop: 'limit' as const },
-} as const;
 
 /**
  * Checks if a URL is a Cloudinary URL from our account.

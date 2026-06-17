@@ -10,7 +10,7 @@ import {
   type UploadProgress,
   type UploadResult,
 } from '@/lib/image-upload';
-import { ALLOWED_IMAGE_TYPES, DEFAULT_MAX_FILE_SIZE } from '@/lib/cloudinary';
+import { ALLOWED_IMAGE_TYPES, DEFAULT_MAX_FILE_SIZE } from '@/lib/cloudinary-constants';
 
 export interface ImageUploaderProps {
   /** Maximum number of files allowed (default: 1) */
