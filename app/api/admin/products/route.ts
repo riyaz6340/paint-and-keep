@@ -13,7 +13,7 @@ import { withAdminRequired, type AuthenticatedRequest } from '@/lib/auth-middlew
 import { ProductService, type CreateProductData } from '@/lib/services/product-service';
 import { handleApiError, badRequest } from '@/lib/api-error';
 import prisma from '@/lib/prisma';
-import type { AgeGroup, DifficultyLevel, Prisma } from '@prisma/client';
+import type { AgeGroup, DifficultyLevel } from '@prisma/client';
 
 const VALID_AGE_GROUPS: AgeGroup[] = ['AGES_4_6', 'AGES_7_9', 'AGES_10_12', 'TEENS', 'ADULTS', 'FAMILY'];
 const VALID_DIFFICULTY_LEVELS: DifficultyLevel[] = ['EASY', 'MEDIUM', 'HARD'];
@@ -37,7 +37,7 @@ export const GET = withAdminRequired(
       const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10) || 20));
 
       // Build where clause (admin view: includes unpublished)
-      const where: Prisma.ProductWhereInput = {};
+      const where: Record<string, any> = {};
 
       if (category) {
         where.category = { slug: category };
@@ -81,7 +81,7 @@ export const GET = withAdminRequired(
       const validSortKeys = ['name', 'price', 'stock', 'createdAt', 'updatedAt'];
       const orderByKey = validSortKeys.includes(sortKey) ? sortKey : 'createdAt';
       const orderByDir = sortDir === 'asc' ? 'asc' : 'desc';
-      const orderBy: Prisma.ProductOrderByWithRelationInput = {
+      const orderBy: Record<string, any> = {
         [orderByKey]: orderByDir,
       };
 

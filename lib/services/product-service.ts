@@ -10,7 +10,7 @@
 import prisma from '@/lib/prisma';
 import { cacheGetOrSet, cacheInvalidatePattern } from '@/lib/cache';
 import { notFound, conflict, badRequest } from '@/lib/api-error';
-import type { AgeGroup, DifficultyLevel, Prisma } from '@prisma/client';
+import type { AgeGroup, DifficultyLevel } from '@prisma/client';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -147,7 +147,7 @@ async function ensureUniqueSlug(baseSlug: string, excludeId?: string): Promise<s
 
 // ─── Sorting ───────────────────────────────────────────────────────────────────
 
-function getSortOrder(sort?: ProductSortOption): Prisma.ProductOrderByWithRelationInput {
+function getSortOrder(sort?: ProductSortOption): any {
   switch (sort) {
     case 'popular':
       return { reviewCount: 'desc' };
@@ -515,8 +515,8 @@ export const ProductService = {
 function buildWhereClause(
   filters: ProductFilters,
   search?: string
-): Prisma.ProductWhereInput {
-  const where: Prisma.ProductWhereInput = {
+): any {
+  const where: any = {
     isPublished: true,
   };
 
@@ -533,7 +533,7 @@ function buildWhereClause(
   // Theme filter (searches category name as theme proxy)
   if (filters.theme) {
     where.category = {
-      ...((where.category as Prisma.CategoryWhereInput) || {}),
+      ...((where.category as any) || {}),
       name: { contains: filters.theme, mode: 'insensitive' },
     };
   }

@@ -11,7 +11,6 @@ import { NextResponse } from 'next/server';
 import { withAdminRequired, type AuthenticatedRequest } from '@/lib/auth-middleware';
 import { handleApiError } from '@/lib/api-error';
 import prisma from '@/lib/prisma';
-import type { Prisma } from '@prisma/client';
 
 /**
  * GET /api/admin/customers
@@ -43,7 +42,7 @@ export const GET = withAdminRequired(
       const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '20', 10) || 20));
 
       // Build where clause
-      const where: Prisma.UserWhereInput = {};
+      const where: Record<string, any> = {};
 
       // Search by name or email (partial match)
       if (search && search.trim().length > 0) {
@@ -93,7 +92,7 @@ export const GET = withAdminRequired(
       const validSortKeys = ['name', 'email', 'createdAt', 'lifetimeSpend'];
       const orderByKey = validSortKeys.includes(sortKey) ? sortKey : 'createdAt';
       const orderByDir = sortDir === 'asc' ? 'asc' : 'desc';
-      const orderBy: Prisma.UserOrderByWithRelationInput = {
+      const orderBy: Record<string, any> = {
         [orderByKey]: orderByDir,
       };
 

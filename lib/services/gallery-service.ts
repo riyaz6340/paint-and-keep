@@ -10,7 +10,7 @@
 
 import prisma from '@/lib/prisma';
 import { badRequest, notFound, unauthorized } from '@/lib/api-error';
-import type { ModerationStatus, Prisma } from '@prisma/client';
+import type { ModerationStatus } from '@prisma/client';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -231,8 +231,8 @@ export const GalleryService = {
  */
 function buildGalleryWhereClause(
   filters?: GalleryFilters
-): Prisma.GalleryPhotoWhereInput {
-  const where: Prisma.GalleryPhotoWhereInput = {
+): any {
+  const where: any = {
     status: { in: ['APPROVED', 'FEATURED'] as ModerationStatus[] },
   };
 

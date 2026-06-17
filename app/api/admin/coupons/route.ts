@@ -12,7 +12,6 @@ import { NextResponse } from 'next/server';
 import { withAdminRequired, type AuthenticatedRequest } from '@/lib/auth-middleware';
 import { handleApiError, badRequest } from '@/lib/api-error';
 import prisma from '@/lib/prisma';
-import type { Prisma } from '@prisma/client';
 
 /**
  * GET /api/admin/coupons
@@ -31,7 +30,7 @@ export const GET = withAdminRequired(
       const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10) || 20));
 
       // Build where clause
-      const where: Prisma.CouponWhereInput = {};
+      const where: Record<string, any> = {};
 
       if (status === 'active') {
         where.isActive = true;
@@ -50,7 +49,7 @@ export const GET = withAdminRequired(
       const validSortKeys = ['code', 'discountValue', 'currentUsage', 'expiryDate', 'createdAt'];
       const orderByKey = validSortKeys.includes(sortKey) ? sortKey : 'createdAt';
       const orderByDir = sortDir === 'asc' ? 'asc' : 'desc';
-      const orderBy: Prisma.CouponOrderByWithRelationInput = {
+      const orderBy: Record<string, any> = {
         [orderByKey]: orderByDir,
       };
 
