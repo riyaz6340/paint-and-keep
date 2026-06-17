@@ -9,16 +9,25 @@ const globalForPrisma = globalThis as unknown as {
 
 function createPrismaClient(): PrismaClient {
   // Priority: POSTGRES_URL (Vercel+Supabase integration pooled) > DATABASE_URL (manual)
-  // Note: POSTGRES_PRISMA_URL has pgbouncer params that don't work with pg Pool adapter
-  const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+  const rawUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL;
   
-  if (!connectionString) {
+  if (!rawUrl) {
     throw new Error('No database URL found. Set POSTGRES_URL or DATABASE_URL.');
+  }
+
+  // Strip sslmode param from URL — we handle SSL config directly via Pool options
+  let connectionString = rawUrl;
+  try {
+    const parsed = new URL(rawUrl);
+    parsed.searchParams.delete('sslmode');
+    connectionString = parsed.toString();
+  } catch {
+    // If URL parsing fails, use as-is
   }
 
   const pool = globalForPrisma.pool ?? new Pool({ 
     connectionString,
-    ssl: { rejectUnauthorized: false },
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   });
   const adapter = new PrismaPg(pool);
 
