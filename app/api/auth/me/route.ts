@@ -16,12 +16,10 @@ import { withAuthRequired, type AuthenticatedRequest } from '@/lib/auth-middlewa
 export const GET = withAuthRequired(async (request: AuthenticatedRequest) => {
   const { userId, email, role, metadata } = request.session;
 
-  return NextResponse.json({
-    user: {
-      id: userId,
-      email,
-      role,
-      ...(metadata?.name && { name: metadata.name }),
-    },
-  });
+  const user: Record<string, any> = { id: userId, email, role };
+  if (metadata && (metadata as any).name) {
+    user.name = (metadata as any).name;
+  }
+
+  return NextResponse.json({ user });
 });
