@@ -65,7 +65,7 @@ function validateRequest(body: unknown): ModerationRequest {
     throw badRequest('Tags must be an array of strings');
   }
 
-  if (tags && tags.length > 5) {
+  if (Array.isArray(tags) && tags.length > 5) {
     throw badRequest('Maximum 5 tags allowed per item');
   }
 
