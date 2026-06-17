@@ -54,7 +54,7 @@ async function getApprovedStories(): Promise<CommunityStoryData[]> {
       },
     });
 
-    return stories.map((story) => ({
+    return stories.map((story: any) => ({
       ...story,
       createdAt: story.createdAt.toISOString(),
     }));
