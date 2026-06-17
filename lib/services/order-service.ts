@@ -453,7 +453,7 @@ export const OrderService = {
             orderNumber,
             trackingNumber: trackingNumber || '',
             carrier: trackingCarrier || '',
-            status: newStatus === OrderStatus.DELIVERED ? 'delivered' : 'in_transit',
+            status: (newStatus as string) === 'DELIVERED' ? 'delivered' : 'in_transit',
           },
         });
         break;
