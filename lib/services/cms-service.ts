@@ -267,7 +267,7 @@ export class CMSService {
       record = await prisma.cMSContent.update({
         where: { section },
         data: {
-          content: content as unknown as Record<string, unknown>,
+          content: content as any,
           version: existing.version + 1,
           isPublished: false,
           updatedBy,
@@ -277,7 +277,7 @@ export class CMSService {
       record = await prisma.cMSContent.create({
         data: {
           section,
-          content: content as unknown as Record<string, unknown>,
+          content: content as any,
           version: 1,
           isPublished: false,
           updatedBy,
