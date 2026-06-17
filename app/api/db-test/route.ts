@@ -20,7 +20,7 @@ export async function GET() {
       return NextResponse.json({ error: 'No connection string found', envCheck }, { status: 500 });
     }
 
-    const pool = new Pool({ connectionString });
+    const pool = new Pool({ connectionString, ssl: { rejectUnauthorized: false } });
     const result = await pool.query('SELECT 1 as connected');
     await pool.end();
 
