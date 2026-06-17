@@ -31,6 +31,7 @@
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@react-email/components": "^1.0.12",
     "bcryptjs": "^3.0.3",
@@ -42,6 +43,7 @@
     "ioredis": "^5.11.1",
     "next": "^14.2.0",
     "next-seo": "^6.5.0",
+    "pg": "^8.13.0",
     "razorpay": "^2.9.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",

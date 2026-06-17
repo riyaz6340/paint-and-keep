@@ -87,7 +87,7 @@ const benefits = [
 const testimonials = [
   {
     quote:
-      'The kids at my daughter's party were SO excited! Every single one of them said it was the best return gift ever.',
+      "The kids at my daughter's party were SO excited! Every single one of them said it was the best return gift ever.",
     name: 'Priya M.',
     event: 'Birthday party for 15 kids',
   },
