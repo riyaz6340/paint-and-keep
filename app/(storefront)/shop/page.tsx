@@ -12,7 +12,7 @@ import { SITE_CONFIG, PERFORMANCE } from '@/lib/constants';
  * Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9
  */
 
-export const revalidate = PERFORMANCE.isrRevalidate; // 60 seconds ISR
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: `Shop Creative Painting Kits | ${SITE_CONFIG.name}`,

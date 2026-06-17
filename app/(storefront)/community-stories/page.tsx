@@ -12,6 +12,9 @@ import type { Metadata } from 'next';
 import prisma from '@/lib/prisma';
 import CommunityStoriesClient from './CommunityStoriesClient';
 
+// Force dynamic rendering - don't try to query DB at build time
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Community Stories | Paint & Keep',
   description:

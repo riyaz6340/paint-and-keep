@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     'See what our community is creating! Browse curated Instagram posts from the #PaintAndKeep community.',
 };
 
+// Force dynamic rendering - don't try to query DB at build time
+export const dynamic = 'force-dynamic';
+
 // Revalidate every 5 minutes for fresh content
 export const revalidate = 300;
 
