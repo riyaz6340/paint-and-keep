@@ -10,6 +10,7 @@
 import prisma from '@/lib/prisma';
 import { cacheGetOrSet, cacheInvalidatePattern } from '@/lib/cache';
 import { notFound, conflict, badRequest } from '@/lib/api-error';
+import { deleteImage, getPublicIdFromUrl } from '@/lib/cloudinary';
 import type { AgeGroup, DifficultyLevel } from '@prisma/client';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -439,7 +440,7 @@ export const ProductService = {
   async deleteProduct(id: string) {
     const product = await prisma.product.findUnique({
       where: { id },
-      select: { id: true, name: true },
+      select: { id: true, name: true, images: { select: { url: true } } },
     });
 
     if (!product) {
@@ -461,6 +462,19 @@ export const ProductService = {
         `Cannot delete product "${product.name}" with ${pendingOrders} pending order(s)`,
         { pendingOrders }
       );
+    }
+
+    // Delete images from Cloudinary
+    for (const image of product.images) {
+      try {
+        const publicId = getPublicIdFromUrl(image.url);
+        if (publicId) {
+          await deleteImage(publicId);
+        }
+      } catch (err) {
+        // Log but don't block deletion if Cloudinary cleanup fails
+        console.warn(`[ProductService] Failed to delete image from Cloudinary: ${image.url}`, err);
+      }
     }
 
     await prisma.product.delete({ where: { id } });
