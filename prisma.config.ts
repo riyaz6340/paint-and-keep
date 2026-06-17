@@ -9,7 +9,8 @@ config({ path: path.join(__dirname, '.env.local'), override: true });
 export default defineConfig({
   schema: path.join(__dirname, 'prisma', 'schema.prisma'),
   datasource: {
-    url: process.env.DATABASE_URL!,
+    // Support Vercel+Supabase integration env vars or standard DATABASE_URL
+    url: process.env.POSTGRES_URL_NON_POOLING || process.env.DATABASE_URL!,
   },
   migrations: {
     seed: 'npx ts-node --compiler-options {"module":"CommonJS"} prisma/seed.ts',

@@ -2,12 +2,12 @@
 require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 require('dotenv').config({ path: require('path').join(__dirname, '..', '.env.local'), override: true });
 
-const DATABASE_URL = process.env.DATABASE_URL;
+const DATABASE_URL = process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL;
 if (!DATABASE_URL) {
-  console.error('❌ DATABASE_URL not set');
+  console.error('❌ DATABASE_URL or POSTGRES_PRISMA_URL not set');
   process.exit(1);
 }
-console.log('✓ DATABASE_URL loaded');
+console.log('✓ Database URL loaded');
 
 const { Pool } = require('pg');
 const { PrismaPg } = require('@prisma/adapter-pg');
