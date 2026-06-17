@@ -45,7 +45,7 @@ async function getApprovedPosts(): Promise<InstagramPostItem[]> {
     },
   });
 
-  return posts.map((post) => ({
+  return posts.map((post: any) => ({
     id: post.id,
     imageUrl: post.imageUrl,
     caption: post.caption,
