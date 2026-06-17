@@ -8,9 +8,14 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient(): PrismaClient {
-  // Support Vercel+Supabase integration env vars (POSTGRES_PRISMA_URL) or standard DATABASE_URL
-  const connectionString = process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL;
+  // Priority: POSTGRES_URL (Vercel+Supabase integration pooled) > DATABASE_URL (manual)
+  // Note: POSTGRES_PRISMA_URL has pgbouncer params that don't work with pg Pool adapter
+  const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
   
+  if (!connectionString) {
+    throw new Error('No database URL found. Set POSTGRES_URL or DATABASE_URL.');
+  }
+
   const pool = globalForPrisma.pool ?? new Pool({ connectionString });
   const adapter = new PrismaPg(pool);
 
