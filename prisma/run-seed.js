@@ -23,16 +23,18 @@ async function main() {
   // ADMIN
   const admin = await prisma.admin.upsert({
     where: { email: 'admin@paintandkeep.com' },
-    update: {},
+    update: {
+      passwordHash: '$2b$12$cY24TswzTIjmh0/217iKeOFS1yU/yvHqY3nB5wpptvxKdQtcVYhEe',
+    },
     create: {
       email: 'admin@paintandkeep.com',
       name: 'Super Admin',
-      passwordHash: '$2b$12$LJ3VlPaYnHpFqOPK6TRdOOxJGFK76wLqmGW6z5NqGrXMCNx5Re4P2',
+      passwordHash: '$2b$12$cY24TswzTIjmh0/217iKeOFS1yU/yvHqY3nB5wpptvxKdQtcVYhEe',
       role: 'SUPER_ADMIN',
       isActive: true,
     },
   });
-  console.log('✅ Admin created:', admin.email, '(password: admin123)');
+  console.log('✅ Admin created:', admin.email, '(password: Admin@123)');
 
   // CATEGORIES
   const categories = await Promise.all([
