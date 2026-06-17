@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Paint & Keep CSS custom properties for design tokens */
+    --color-brand-primary: #ff6b35;
+    --color-brand-secondary: #7b2d8b;
+    --color-brand-accent: #00bfa6;
+    --color-brand-highlight: #ffd166;
+    --color-brand-dark: #2d3047;
+    --color-brand-light: #fff8f0;
+
+    /* Typography scale */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+
+    /* Spacing scale */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    --space-20: 5rem;
+
+    /* Transition defaults */
+    --transition-fast: 150ms ease;
+    --transition-base: 250ms ease;
+    --transition-slow: 400ms ease;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-brand-light text-text-primary font-body;
+  }
+
+  /* Accessible focus styles */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-primary rounded-sm;
+  }
+
+  /* Heading defaults */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer components {
+  /* Reusable button base styles */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-xl font-body font-semibold
+           transition-all duration-300 ease-out
+           focus-visible:outline-2 focus-visible:outline-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand-primary text-white shadow-button
+           hover:bg-orange-600 hover:shadow-button-hover
+           active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply btn bg-brand-secondary text-white
+           hover:bg-purple-800
+           active:scale-95;
+  }
+
+  .btn-outline {
+    @apply btn border-2 border-brand-primary text-brand-primary bg-transparent
+           hover:bg-brand-primary hover:text-white
+           active:scale-95;
+  }
+
+  /* Card component base */
+  .card {
+    @apply bg-surface rounded-2xl shadow-card p-6
+           transition-shadow duration-300
+           hover:shadow-card-hover;
+  }
+
+  /* Container with responsive padding */
+  .container-page {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Skip to main content link for accessibility */
+  .skip-link {
+    @apply absolute -top-full left-4 z-50 
+           bg-brand-dark text-white px-4 py-2 rounded-b-lg
+           focus:top-0 transition-all;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar while preserving scroll functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Touch target minimum size for mobile (44x44px per WCAG/Requirement 24.1) */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Paint splash decorative element */
+  .paint-splash {
+    @apply absolute rounded-blob opacity-20;
+  }
+
+  /* Smooth animation for scroll-triggered elements */
+  .animate-on-scroll {
+    @apply opacity-0 translate-y-5 transition-all duration-700 ease-out;
+  }
+
+  .animate-on-scroll.visible {
+    @apply opacity-100 translate-y-0;
+  }
+}
