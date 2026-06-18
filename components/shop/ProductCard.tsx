@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -27,6 +28,7 @@ interface ProductCardProps {
  * Requirements: 3.7
  */
 export function ProductCard({ product, onAddToCart }: ProductCardProps) {
+  const [addedToCart, setAddedToCart] = useState(false);
   const imageUrl = product.images[0]?.url || '/placeholder-product.jpg';
   const imageAlt = product.images[0]?.alt || product.name;
   const isOutOfStock = product.stock === 0;
@@ -93,20 +95,25 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           <button
             onClick={(e) => {
               e.preventDefault();
-              if (!isOutOfStock) {
+              if (!isOutOfStock && !addedToCart) {
                 onAddToCart(product.id);
+                setAddedToCart(true);
+                setTimeout(() => setAddedToCart(false), 2000);
               }
             }}
             disabled={isOutOfStock}
-            className="btn-primary text-xs px-3 py-2 disabled:opacity-50
-                       disabled:cursor-not-allowed"
+            className={`text-xs px-3 py-2 rounded-lg font-semibold transition-all ${
+              addedToCart
+                ? 'bg-green-500 text-white'
+                : 'btn-primary disabled:opacity-50 disabled:cursor-not-allowed'
+            }`}
             aria-label={
               isOutOfStock
                 ? `${product.name} is out of stock`
                 : `Add ${product.name} to cart`
             }
           >
-            {isOutOfStock ? 'Sold Out' : 'Add To Cart'}
+            {isOutOfStock ? 'Sold Out' : addedToCart ? '✓ Added!' : 'Add To Cart'}
           </button>
         </div>
       </div>

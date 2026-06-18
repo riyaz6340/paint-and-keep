@@ -102,20 +102,27 @@ export default function CartPage() {
 
         const data = await res.json();
 
-        if (res.ok) {
-          // Update cart with discount applied
-          if (data.cart) {
-            setCart(data.cart);
-          }
+        if (res.ok && data.success) {
+          // Update cart discount and total
+          const discountAmount = data.discount || 0;
+          setCart((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  discount: discountAmount,
+                  total: prev.subtotal - discountAmount + prev.shipping,
+                }
+              : prev
+          );
           setAppliedCoupon({
-            code: data.coupon?.code || code,
-            discountAmount: data.coupon?.discountAmount || data.cart?.discount || 0,
+            code: data.code || code,
+            discountAmount,
           });
           return { success: true };
         } else {
           return {
             success: false,
-            error: data.message || data.error || 'Invalid coupon code',
+            error: data.message || data.reason || 'Invalid coupon code',
           };
         }
       } catch {
@@ -128,20 +135,20 @@ export default function CartPage() {
   // Remove coupon
   const handleRemoveCoupon = useCallback(async () => {
     try {
-      const res = await fetch('/api/cart/coupon', {
-        method: 'DELETE',
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.cart) {
-          setCart(data.cart);
-        }
+      if (appliedCoupon) {
+        await fetch(`/api/cart/coupon?code=${appliedCoupon.code}`, {
+          method: 'DELETE',
+        });
       }
     } catch {
       // Silently handle
     }
+    // Reset discount in cart state
+    setCart((prev) =>
+      prev ? { ...prev, discount: 0, total: prev.subtotal + prev.shipping } : prev
+    );
     setAppliedCoupon(null);
-  }, []);
+  }, [appliedCoupon]);
 
   // Shipping estimate
   const handleShippingEstimate = useCallback(
