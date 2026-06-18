@@ -70,12 +70,23 @@ export default function CheckoutPage() {
     fetchCart();
   }, []);
 
-  // Fetch saved address for authenticated users
+  // Fetch saved address for authenticated users, or pre-fill from profile
   useEffect(() => {
     if (isAuthenticated && !authLoading) {
       fetchSavedAddress();
     }
   }, [isAuthenticated, authLoading]);
+
+  // Pre-fill name/phone from user profile if no saved address
+  useEffect(() => {
+    if (user && !savedAddress) {
+      setSavedAddress({
+        fullName: user.name || '',
+        phone: user.phone || '',
+        country: 'India',
+      });
+    }
+  }, [user, savedAddress]);
 
   const fetchCart = async () => {
     try {
