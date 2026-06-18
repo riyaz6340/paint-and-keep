@@ -79,14 +79,22 @@ export default function CheckoutPage() {
 
   // Pre-fill name/phone from user profile if no saved address
   useEffect(() => {
-    if (user && !savedAddress) {
-      setSavedAddress({
-        fullName: user.name || '',
-        phone: user.phone || '',
-        country: 'India',
-      });
+    if (isAuthenticated && !savedAddress) {
+      // Fetch user profile to get name and phone
+      fetch('/api/account/profile', { credentials: 'include' })
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data?.user) {
+            setSavedAddress({
+              fullName: data.user.name || '',
+              phone: data.user.phone || '',
+              country: 'India',
+            });
+          }
+        })
+        .catch(() => {});
     }
-  }, [user, savedAddress]);
+  }, [isAuthenticated, savedAddress]);
 
   const fetchCart = async () => {
     try {
