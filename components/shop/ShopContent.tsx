@@ -207,6 +207,26 @@ export function ShopContent({ initialData }: ShopContentProps) {
 
   // Add to cart handler - calls the cart API
   const [cartMessage, setCartMessage] = useState<string | null>(null);
+  const [cartItems, setCartItems] = useState<Record<string, number>>({});
+
+  // Fetch cart items to show quantities on product cards
+  useEffect(() => {
+    async function fetchCartItems() {
+      try {
+        const res = await fetch('/api/cart');
+        if (res.ok) {
+          const data = await res.json();
+          const items: Record<string, number> = {};
+          (data.items || []).forEach((item: { productId?: string; id?: string; quantity: number }) => {
+            const pid = item.productId || item.id;
+            if (pid) items[pid] = item.quantity;
+          });
+          setCartItems(items);
+        }
+      } catch {}
+    }
+    fetchCartItems();
+  }, []);
 
   const handleAddToCart = async (productId: string) => {
     try {
@@ -217,8 +237,9 @@ export function ShopContent({ initialData }: ShopContentProps) {
       });
 
       if (res.ok) {
+        setCartItems(prev => ({ ...prev, [productId]: (prev[productId] || 0) + 1 }));
         setCartMessage('Added to cart!');
-        setTimeout(() => setCartMessage(null), 3000);
+        setTimeout(() => setCartMessage(null), 2000);
       } else {
         const data = await res.json();
         setCartMessage(data.message || 'Failed to add to cart');
@@ -228,6 +249,22 @@ export function ShopContent({ initialData }: ShopContentProps) {
       setCartMessage('Failed to add to cart');
       setTimeout(() => setCartMessage(null), 3000);
     }
+  };
+
+  const handleUpdateQuantity = async (productId: string, quantity: number) => {
+    try {
+      if (quantity <= 0) {
+        await fetch(`/api/cart/items/${productId}`, { method: 'DELETE' });
+        setCartItems(prev => { const n = {...prev}; delete n[productId]; return n; });
+      } else {
+        await fetch(`/api/cart/items/${productId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quantity }),
+        });
+        setCartItems(prev => ({ ...prev, [productId]: quantity }));
+      }
+    } catch {}
   };
 
   const showEmptyState = !isLoading && data.products.length === 0;
@@ -321,6 +358,8 @@ export function ShopContent({ initialData }: ShopContentProps) {
           <ProductGrid
             products={data.products}
             onAddToCart={handleAddToCart}
+            onUpdateQuantity={handleUpdateQuantity}
+            cartItems={cartItems}
             isLoading={isLoading}
           />
         )}

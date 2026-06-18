@@ -21,6 +21,8 @@ interface ProductCardProps {
   product: ProductCardData;
   onAddToCart: (productId: string) => void;
   onUpdateQuantity?: (productId: string, quantity: number) => void;
+  /** Initial quantity from cart (to persist state across navigation) */
+  initialQuantity?: number;
 }
 
 /**
@@ -29,8 +31,8 @@ interface ProductCardProps {
  *
  * Requirements: 3.7
  */
-export function ProductCard({ product, onAddToCart, onUpdateQuantity }: ProductCardProps) {
-  const [quantity, setQuantity] = useState(0);
+export function ProductCard({ product, onAddToCart, onUpdateQuantity, initialQuantity = 0 }: ProductCardProps) {
+  const [quantity, setQuantity] = useState(initialQuantity);
   const [isUpdating, setIsUpdating] = useState(false);
   const imageUrl = product.images[0]?.url || '/placeholder-product.jpg';
   const imageAlt = product.images[0]?.alt || product.name;

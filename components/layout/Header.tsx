@@ -86,15 +86,27 @@ export default function Header() {
 
           {/* Account link */}
           {isLoggedIn ? (
-            <Link
-              href="/account"
-              className="hidden md:block p-2 text-brand-dark hover:text-brand-primary transition-colors"
-              aria-label="Account"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </Link>
+            <div className="hidden md:flex items-center gap-3">
+              <Link
+                href="/account"
+                className="p-2 text-brand-dark hover:text-brand-primary transition-colors"
+                aria-label="Account"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </Link>
+              <button
+                onClick={async () => {
+                  await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+                  setIsLoggedIn(false);
+                  window.location.href = '/';
+                }}
+                className="text-sm font-medium text-text-secondary hover:text-red-500 transition-colors"
+              >
+                Logout
+              </button>
+            </div>
           ) : (
             <div className="hidden md:flex items-center gap-3">
               <Link
@@ -138,7 +150,20 @@ export default function Header() {
           <Link href="/about" className="block text-sm font-medium text-text-primary py-2" onClick={() => setMobileMenuOpen(false)}>About</Link>
           <Link href="/contact" className="block text-sm font-medium text-text-primary py-2" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
           {isLoggedIn ? (
-            <Link href="/account" className="block text-sm font-medium text-text-primary py-2" onClick={() => setMobileMenuOpen(false)}>My Account</Link>
+            <>
+              <Link href="/account" className="block text-sm font-medium text-text-primary py-2" onClick={() => setMobileMenuOpen(false)}>My Account</Link>
+              <button
+                onClick={async () => {
+                  await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+                  setIsLoggedIn(false);
+                  setMobileMenuOpen(false);
+                  window.location.href = '/';
+                }}
+                className="block text-sm font-medium text-red-500 py-2 text-left w-full"
+              >
+                Logout
+              </button>
+            </>
           ) : (
             <>
               <Link href="/login" className="block text-sm font-medium text-brand-primary py-2" onClick={() => setMobileMenuOpen(false)}>Login</Link>

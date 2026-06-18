@@ -5,6 +5,8 @@ import { ProductCard, type ProductCardData } from './ProductCard';
 interface ProductGridProps {
   products: ProductCardData[];
   onAddToCart: (productId: string) => void;
+  onUpdateQuantity?: (productId: string, quantity: number) => void;
+  cartItems?: Record<string, number>;
   isLoading?: boolean;
 }
 
@@ -17,6 +19,8 @@ interface ProductGridProps {
 export function ProductGrid({
   products,
   onAddToCart,
+  onUpdateQuantity,
+  cartItems = {},
   isLoading = false,
 }: ProductGridProps) {
   if (isLoading) {
@@ -41,7 +45,12 @@ export function ProductGrid({
     >
       {products.map((product) => (
         <div key={product.id} role="listitem">
-          <ProductCard product={product} onAddToCart={onAddToCart} />
+          <ProductCard
+            product={product}
+            onAddToCart={onAddToCart}
+            onUpdateQuantity={onUpdateQuantity}
+            initialQuantity={cartItems[product.id] || 0}
+          />
         </div>
       ))}
     </div>
