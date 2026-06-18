@@ -7,7 +7,7 @@
  * Links to registration page for new users.
  */
 
-import { FormEvent, useState, Suspense } from 'react';
+import { FormEvent, useState, Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -19,6 +19,13 @@ function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then(res => { if (res.ok) router.replace(redirectTo); })
+      .catch(() => {});
+  }, [router, redirectTo]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
