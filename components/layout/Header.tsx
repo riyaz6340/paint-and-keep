@@ -6,8 +6,9 @@ import { useState, useEffect } from 'react';
 export default function Header() {
   const [cartCount, setCartCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Fetch cart count on mount
+  // Fetch cart count and auth status on mount
   useEffect(() => {
     async function fetchCart() {
       try {
@@ -20,9 +21,19 @@ export default function Header() {
         // silently fail
       }
     }
-    fetchCart();
 
-    // Listen for cart updates
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/me', { credentials: 'include' });
+        setIsLoggedIn(res.ok);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    }
+
+    fetchCart();
+    checkAuth();
+
     const interval = setInterval(fetchCart, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -74,15 +85,24 @@ export default function Header() {
           </Link>
 
           {/* Account link */}
-          <Link
-            href="/account"
-            className="hidden md:block p-2 text-brand-dark hover:text-brand-primary transition-colors"
-            aria-label="Account"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </Link>
+          {isLoggedIn ? (
+            <Link
+              href="/account"
+              className="hidden md:block p-2 text-brand-dark hover:text-brand-primary transition-colors"
+              aria-label="Account"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="hidden md:block text-sm font-medium text-brand-dark hover:text-brand-primary transition-colors"
+            >
+              Login
+            </Link>
+          )}
 
           {/* Mobile menu button */}
           <button
@@ -109,7 +129,14 @@ export default function Header() {
           <Link href="/gallery" className="block text-sm font-medium text-text-primary py-2" onClick={() => setMobileMenuOpen(false)}>Gallery</Link>
           <Link href="/about" className="block text-sm font-medium text-text-primary py-2" onClick={() => setMobileMenuOpen(false)}>About</Link>
           <Link href="/contact" className="block text-sm font-medium text-text-primary py-2" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
-          <Link href="/account" className="block text-sm font-medium text-text-primary py-2" onClick={() => setMobileMenuOpen(false)}>My Account</Link>
+          {isLoggedIn ? (
+            <Link href="/account" className="block text-sm font-medium text-text-primary py-2" onClick={() => setMobileMenuOpen(false)}>My Account</Link>
+          ) : (
+            <>
+              <Link href="/login" className="block text-sm font-medium text-brand-primary py-2" onClick={() => setMobileMenuOpen(false)}>Login</Link>
+              <Link href="/register" className="block text-sm font-medium text-brand-primary py-2" onClick={() => setMobileMenuOpen(false)}>Create Account</Link>
+            </>
+          )}
         </nav>
       )}
     </header>
