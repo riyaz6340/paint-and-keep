@@ -177,7 +177,7 @@ export default function AdminLayout({
       <AdminSidebar role={admin.role} />
 
       {/* Main content area */}
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col lg:ml-0">
         {/* Header */}
         <AdminHeader
           adminName={admin.name}
@@ -186,7 +186,7 @@ export default function AdminLayout({
         />
 
         {/* Page content */}
-        <main id="main-content" role="main" className="flex-1 overflow-y-auto">
+        <main id="main-content" role="main" className="flex-1 overflow-y-auto p-4 pt-16 lg:p-6 lg:pt-6">
           {children}
         </main>
       </div>

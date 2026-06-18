@@ -13,6 +13,7 @@
 
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -113,61 +114,99 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ role }: AdminSidebarProps) {
   const pathname = usePathname();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // Filter nav items based on role
   const visibleItems = navItems.filter((item) => item.roles.includes(role));
 
   return (
-    <aside
-      className="flex h-full w-64 flex-col bg-surface-dark text-text-inverse"
-      aria-label="Admin navigation"
-    >
-      {/* Brand / Logo */}
-      <div className="flex items-center gap-2 border-b border-white/10 px-6 py-5">
-        <span className="text-2xl">🎨</span>
-        <span className="font-heading text-lg font-semibold text-white">
-          Paint & Keep
-        </span>
-      </div>
+    <>
+      {/* Mobile hamburger button */}
+      <button
+        onClick={() => setIsMobileOpen(true)}
+        className="fixed left-4 top-4 z-40 rounded-md bg-surface-dark p-2 text-white shadow-lg lg:hidden"
+        aria-label="Open navigation menu"
+      >
+        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
 
-      {/* Navigation Links */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
-        <ul className="space-y-1" role="list">
-          {visibleItems.map((item) => {
-            const isActive =
-              item.href === '/admin'
-                ? pathname === '/admin'
-                : pathname.startsWith(item.href);
+      {/* Mobile overlay */}
+      {isMobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={() => setIsMobileOpen(false)}
+          aria-hidden="true"
+        />
+      )}
 
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'bg-brand-primary/20 text-brand-primary'
-                      : 'text-white/70 hover:bg-white/10 hover:text-white'
-                  }`}
-                  aria-current={isActive ? 'page' : undefined}
-                >
-                  <span className="text-lg" aria-hidden="true">
-                    {item.icon}
-                  </span>
-                  {item.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
-
-      {/* Role badge at bottom */}
-      <div className="border-t border-white/10 px-4 py-3">
-        <div className="rounded-md bg-white/10 px-3 py-2 text-center text-xs text-white/60">
-          {formatRoleName(role)}
+      {/* Sidebar */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-surface-dark text-text-inverse transition-transform duration-300 lg:relative lg:translate-x-0 ${
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        aria-label="Admin navigation"
+      >
+        {/* Brand / Logo + Close button on mobile */}
+        <div className="flex items-center justify-between border-b border-white/10 px-6 py-5">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🎨</span>
+            <span className="font-heading text-lg font-semibold text-white">
+              Paint & Keep
+            </span>
+          </div>
+          <button
+            onClick={() => setIsMobileOpen(false)}
+            className="rounded-md p-1 text-white/70 hover:text-white lg:hidden"
+            aria-label="Close navigation menu"
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
-      </div>
-    </aside>
+
+        {/* Navigation Links */}
+        <nav className="flex-1 overflow-y-auto px-3 py-4">
+          <ul className="space-y-1" role="list">
+            {visibleItems.map((item) => {
+              const isActive =
+                item.href === '/admin'
+                  ? pathname === '/admin'
+                  : pathname.startsWith(item.href);
+
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    onClick={() => setIsMobileOpen(false)}
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                      isActive
+                        ? 'bg-brand-primary/20 text-brand-primary'
+                        : 'text-white/70 hover:bg-white/10 hover:text-white'
+                    }`}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    <span className="text-lg" aria-hidden="true">
+                      {item.icon}
+                    </span>
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        {/* Role badge at bottom */}
+        <div className="border-t border-white/10 px-4 py-3">
+          <div className="rounded-md bg-white/10 px-3 py-2 text-center text-xs text-white/60">
+            {formatRoleName(role)}
+          </div>
+        </div>
+      </aside>
+    </>
   );
 }
 

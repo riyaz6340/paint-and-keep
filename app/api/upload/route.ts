@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
       'community',
       'reviews',
       'profiles',
+      'profile-pictures',
       'uploads',
       'instagram',
       'cms',
