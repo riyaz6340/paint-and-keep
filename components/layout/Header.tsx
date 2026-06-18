@@ -96,12 +96,20 @@ export default function Header() {
               </svg>
             </Link>
           ) : (
-            <Link
-              href="/login"
-              className="hidden md:block text-sm font-medium text-brand-dark hover:text-brand-primary transition-colors"
-            >
-              Login
-            </Link>
+            <div className="hidden md:flex items-center gap-3">
+              <Link
+                href="/login"
+                className="text-sm font-medium text-brand-dark hover:text-brand-primary transition-colors"
+              >
+                Login
+              </Link>
+              <Link
+                href="/register"
+                className="text-sm font-medium bg-brand-primary text-white px-4 py-2 rounded-lg hover:bg-brand-primary/90 transition-colors"
+              >
+                Sign Up
+              </Link>
+            </div>
           )}
 
           {/* Mobile menu button */}
