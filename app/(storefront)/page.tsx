@@ -1,9 +1,10 @@
 import HeroSection from '@/components/home/HeroSection';
-import FeatureCards from '@/components/home/FeatureCards';
+import TrustBadges from '@/components/home/TrustBadges';
+import ShopByCategory from '@/components/home/ShopByCategory';
 import BestSellers from '@/components/home/BestSellers';
+import ShopByAge from '@/components/home/ShopByAge';
 import HowItWorks from '@/components/home/HowItWorks';
 import GalleryPreview from '@/components/home/GalleryPreview';
-import InstagramPreview from '@/components/home/InstagramPreview';
 import TestimonialsCarousel from '@/components/home/TestimonialsCarousel';
 import NewsletterSignup from '@/components/home/NewsletterSignup';
 
@@ -11,11 +12,12 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
-      <FeatureCards />
+      <TrustBadges />
+      <ShopByCategory />
       <BestSellers />
+      <ShopByAge />
       <HowItWorks />
       <GalleryPreview />
-      <InstagramPreview />
       <TestimonialsCarousel />
       <NewsletterSignup />
     </>

@@ -10,6 +10,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
 import CheckoutSteps, { type CheckoutStep } from '@/components/checkout/CheckoutSteps';
 import AddressForm, { type ShippingAddress } from '@/components/checkout/AddressForm';
@@ -34,7 +35,15 @@ interface OrderResult {
 }
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.replace('/login?redirect=/checkout');
+    }
+  }, [authLoading, isAuthenticated, router]);
 
   // Checkout flow state
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('address');

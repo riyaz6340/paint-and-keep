@@ -7,12 +7,14 @@
  * Links to registration page for new users.
  */
 
-import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { FormEvent, useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/account';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -38,8 +40,8 @@ export default function LoginPage() {
         return;
       }
 
-      // Redirect to account page on success
-      router.push('/account');
+      // Redirect to intended page on success
+      router.push(redirectTo);
     } catch {
       setError('Something went wrong. Please try again.');
     } finally {
@@ -121,5 +123,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-[70vh] items-center justify-center"><p>Loading...</p></div>}>
+      <LoginForm />
+    </Suspense>
   );
 }
