@@ -20,18 +20,52 @@ export interface ProductCardData {
 interface ProductCardProps {
   product: ProductCardData;
   onAddToCart: (productId: string) => void;
+  onUpdateQuantity?: (productId: string, quantity: number) => void;
 }
 
 /**
  * Individual product card with image, name, price, star rating, and Add To Cart button.
+ * After adding, shows quantity controls (- count +) like Mamaearth.
  *
  * Requirements: 3.7
  */
-export function ProductCard({ product, onAddToCart }: ProductCardProps) {
-  const [addedToCart, setAddedToCart] = useState(false);
+export function ProductCard({ product, onAddToCart, onUpdateQuantity }: ProductCardProps) {
+  const [quantity, setQuantity] = useState(0);
+  const [isUpdating, setIsUpdating] = useState(false);
   const imageUrl = product.images[0]?.url || '/placeholder-product.jpg';
   const imageAlt = product.images[0]?.alt || product.name;
   const isOutOfStock = product.stock === 0;
+
+  const handleAdd = () => {
+    if (!isOutOfStock) {
+      onAddToCart(product.id);
+      setQuantity(1);
+    }
+  };
+
+  const handleIncrease = async () => {
+    if (isUpdating) return;
+    setIsUpdating(true);
+    const newQty = quantity + 1;
+    setQuantity(newQty);
+    if (onUpdateQuantity) {
+      await onUpdateQuantity(product.id, newQty);
+    } else {
+      await onAddToCart(product.id);
+    }
+    setIsUpdating(false);
+  };
+
+  const handleDecrease = async () => {
+    if (isUpdating) return;
+    setIsUpdating(true);
+    const newQty = quantity - 1;
+    setQuantity(newQty);
+    if (onUpdateQuantity) {
+      await onUpdateQuantity(product.id, newQty);
+    }
+    setIsUpdating(false);
+  };
 
   return (
     <motion.article
@@ -88,33 +122,50 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
         </div>
 
         {/* Price and Add to Cart */}
-        <div className="mt-auto flex items-center justify-between gap-2 pt-2">
-          <span className="text-lg font-bold text-brand-dark">
-            ₹{product.price.toLocaleString('en-IN')}
-          </span>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              if (!isOutOfStock && !addedToCart) {
-                onAddToCart(product.id);
-                setAddedToCart(true);
-                setTimeout(() => setAddedToCart(false), 2000);
+        <div className="mt-auto pt-2">
+          <div className="mb-2">
+            <span className="text-lg font-bold text-brand-dark">
+              ₹{product.price.toLocaleString('en-IN')}
+            </span>
+          </div>
+          
+          {quantity === 0 ? (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                handleAdd();
+              }}
+              disabled={isOutOfStock}
+              className="w-full rounded-lg bg-brand-primary py-2.5 text-sm font-bold text-white transition-all hover:bg-brand-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label={
+                isOutOfStock
+                  ? `${product.name} is out of stock`
+                  : `Add ${product.name} to cart`
               }
-            }}
-            disabled={isOutOfStock}
-            className={`text-xs px-3 py-2 rounded-lg font-semibold transition-all ${
-              addedToCart
-                ? 'bg-green-500 text-white'
-                : 'btn-primary disabled:opacity-50 disabled:cursor-not-allowed'
-            }`}
-            aria-label={
-              isOutOfStock
-                ? `${product.name} is out of stock`
-                : `Add ${product.name} to cart`
-            }
-          >
-            {isOutOfStock ? 'Sold Out' : addedToCart ? '✓ Added!' : 'Add To Cart'}
-          </button>
+            >
+              {isOutOfStock ? 'Sold Out' : 'ADD TO CART'}
+            </button>
+          ) : (
+            <div className="flex items-center justify-between rounded-lg border-2 border-brand-primary overflow-hidden">
+              <button
+                onClick={(e) => { e.preventDefault(); handleDecrease(); }}
+                className="flex items-center justify-center w-10 h-10 text-brand-primary font-bold text-lg hover:bg-brand-primary/10 transition-colors"
+                aria-label="Decrease quantity"
+              >
+                –
+              </button>
+              <span className="text-sm font-bold text-brand-dark min-w-[2rem] text-center">
+                {quantity}
+              </span>
+              <button
+                onClick={(e) => { e.preventDefault(); handleIncrease(); }}
+                className="flex items-center justify-center w-10 h-10 text-brand-primary font-bold text-lg hover:bg-brand-primary/10 transition-colors"
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </motion.article>
