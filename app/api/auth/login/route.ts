@@ -129,23 +129,21 @@ export async function POST(request: NextRequest) {
 
     // Password is valid — check account status
 
-    // Check email verification
-    if (!user.emailVerified) {
-      throw new ApiError({
-        code: 'EMAIL_NOT_VERIFIED',
-        message: 'Please verify your email address before logging in.',
-        statusCode: 403,
-        retryable: false,
-      });
-    }
-
-    // Check if account is active
-    if (!user.isActive) {
+    // Check if account is disabled by admin (not the same as unverified)
+    if (!user.isActive && user.emailVerified) {
       throw new ApiError({
         code: 'ACCOUNT_DISABLED',
         message: 'This account has been disabled. Please contact support.',
         statusCode: 403,
         retryable: false,
+      });
+    }
+
+    // Auto-activate account on first successful login
+    if (!user.isActive || !user.emailVerified) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { isActive: true, emailVerified: true },
       });
     }
 
